@@ -1,10 +1,22 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class GameFrame extends JFrame {
+    private JPanel FirstPanel;
+    private JLabel instructions;
+    private String fileContent;
+    private JButton startButton;
+    File file = new File("README.md");
+    Scanner fscnr = new Scanner(file);
+
     private JPanel mainPanel;
     private JPanel topPanel;
     private JPanel p1Panel;
@@ -20,13 +32,13 @@ public class GameFrame extends JFrame {
     private int p1NumSeeds = 32;
     private int p2NumSeeds = 32;
     private boolean whosTurn = true;
-    private Color blue = new Color(5, 28, 64);
+    private Color red = new Color(100, 0, 5);
     private Color green = new Color(28, 64, 5);
     private Color brown = new Color(64, 41, 5);
 
-    public GameFrame(String title) {
+    public GameFrame(String title) throws FileNotFoundException {
         super(title);
-        this.setSize(900, 385);
+        this.setSize(1000, 700);
         this.setLocation(100, 100);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -35,8 +47,39 @@ public class GameFrame extends JFrame {
         UIManager.put("Button.select", brown);
         UIManager.put("Button.border", brown);
 
+        FirstPanel = new JPanel();
+        FirstPanel.setLayout(new BoxLayout(FirstPanel, BoxLayout.Y_AXIS));
+        FirstPanel.setBorder(new EmptyBorder(-10, 30, 0, 30));
+        FirstPanel.setBackground(Color.black);
+
+        instructions = new JLabel();
+        instructions.setFont(new Font("", Font.BOLD, 14));
+        instructions.setForeground(Color.white);
+
+        fileContent = "";
+        while (fscnr.hasNextLine()) {
+            fileContent += (fscnr.nextLine() + "<br>");
+        }
+        fscnr.close();
+
+        instructions.setText(fileContent);
+        FirstPanel.add(instructions);
+
+        startButton = new JButton("START GAME");
+        startButton.setForeground(Color.white);
+        startButton.setBackground(green);
+        startButton.setFocusable(false);
+        startButton.setBorder(new EmptyBorder(5, 5, 5, 5));
+        startButton.addActionListener(e -> {
+            this.setSize(900, 385);
+            this.setContentPane(mainPanel);
+        });
+        FirstPanel.add(startButton);
+
+        this.setContentPane(FirstPanel);
+        this.setVisible(true);
+
         mainPanel = new JPanel();
-        this.setContentPane(mainPanel);
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         topPanel = new JPanel();
@@ -84,7 +127,6 @@ public class GameFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 thisPit = (Pit) e.getSource();
                 numSeeds = thisPit.getNumSeeds();
-                index = thisPit.getIndex();
 
                 if (myPits.contains(thisPit)) {
                     thesePits = myPits;
@@ -93,9 +135,10 @@ public class GameFrame extends JFrame {
                     thesePits = otherPits;
                     theOtherPits = myPits;
                 }
+                index = thesePits.indexOf(thisPit);
 
                 if ((numSeeds > 1) && (whosTurn == myPits.contains(thisPit))) {
-                    thesePits.get(index).playPit();
+                    thisPit.sowSeeds();
 
                     for (int i = 0; i < numSeeds; i++) {
                         if (index >= 0 && index <= 15) {
@@ -108,7 +151,7 @@ public class GameFrame extends JFrame {
                     if (thesePits.get(index).getNumSeeds() == 1) {
                         if (whosTurn) {
                             gameStatus.setText("Player 2's turn");
-                            topPanel.setBackground(blue);
+                            topPanel.setBackground(red);
                             bottomPanel.setBackground(Color.gray);
                             whosTurn = false;
                         } else {
@@ -121,8 +164,8 @@ public class GameFrame extends JFrame {
                         if (outOfMoves(myPits)) {
                             gameStatus.setText("Player 2 won");
                             gameStatus.setForeground(Color.white);
-                            statusPanel.setBackground(blue);
-                            topPanel.setBackground(blue);
+                            statusPanel.setBackground(red);
+                            topPanel.setBackground(red);
                         } else if (outOfMoves(otherPits)) {
                             gameStatus.setText("Player 1 won");
                             gameStatus.setForeground(Color.white);
@@ -140,7 +183,7 @@ public class GameFrame extends JFrame {
             }
 
             public boolean isInnerPit(int index) {
-                int i = thesePits.get(index).getIndex();
+                int i = thesePits.indexOf(thesePits.get(index));
 
                 if (myPits.contains(thisPit) && i >= 8 && i <= 15) {
                     return true;
@@ -158,8 +201,8 @@ public class GameFrame extends JFrame {
 
                 if (innerOtherPit.hasSeeds() && outerOtherPit.hasSeeds()) {
                     numSeeds = innerOtherPit.getNumSeeds() + outerOtherPit.getNumSeeds();
-                    innerOtherPit.playPit();
-                    outerOtherPit.playPit();
+                    innerOtherPit.sowSeeds();
+                    outerOtherPit.sowSeeds();
 
                     if (myPits.contains(thisPit)) {
                         p1NumSeeds += numSeeds;
@@ -194,11 +237,11 @@ public class GameFrame extends JFrame {
         for (int i = 0; i <= numPits; i++) {
 
             if ((i >= 8 && i < 16)) {
-                myPits.add(new Pit(4, i));
-                otherPits.add(new Pit(0, i));
+                myPits.add(new Pit(4));
+                otherPits.add(new Pit(0));
             } else {
-                myPits.add(new Pit(0, i));
-                otherPits.add(new Pit(1, i));
+                myPits.add(new Pit(0));
+                otherPits.add(new Pit(4));
             }
 
             myPits.get(i).setFocusable(false);
@@ -208,8 +251,6 @@ public class GameFrame extends JFrame {
         }
 
         arrangePanels();
-
-        this.setVisible(true);
     }
 
     public void arrangePanels() {
