@@ -2,7 +2,7 @@
 
 ## Description
 
-This game is a replica of the Igisoro/Urubugu board game which is a two-player variant of the mancala game family. It is a variant of the Omweso game of the Baganda people (Uganda), and it is played primarily in Burundi and Rwanda. Igisoro, like Omweso and other mancalas from Eastern Africa such as Bao (game), is played with a 4 by 8 board of pits and 64 seeds. A player's territory is the two rows of pits closest to them.
+This is an attempt to make the Igisoro/Urubugu board game which is a two-player variant of the mancala game family. It is a variant of the Omweso game of the Baganda people (Uganda), and it is played primarily in Burundi and Rwanda. Igisoro, like Omweso and other mancalas from Eastern Africa such as Bao (game), is played with a 4 by 8 board of pits and 64 seeds. A player's territory is the two rows of pits closest to them.
 
 ## The Rules
 

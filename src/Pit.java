@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * horizontally adjacent pits.
  *
  * @author Wens Kedar Barambona
- * @date 3/10/2024
+ * @date 3/10/2025
  */
 public class Pit extends JButton {
     private int numSeeds;
