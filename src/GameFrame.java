@@ -57,8 +57,8 @@ public class GameFrame extends JFrame {
         // Create the Gameframe with given title and assign location, size, and
         // defaultCloseOperation properties
         super(title);
-        this.setSize(1000, 700);
-        this.setLocation(100, 100);
+        this.setSize(1000, 750);
+        this.setLocation(100, 50);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Modify the UIManager to change properties of button components at ounce.
@@ -84,8 +84,18 @@ public class GameFrame extends JFrame {
         // Read the contents of the README.md file into the String fileContent
         // Appending line breaks after each line, then close the fscnr
         fileContent = "";
+        // for (int i = 0; fscnr.hasNextLine(); i++) {
+        // fileContent += (i == 1 || (i >= 20 && i <= 39)) ? (fscnr.nextLine() + "<br>")
+        // : "";
+        // }
+        int line = 1;
         while (fscnr.hasNextLine()) {
-            fileContent += (fscnr.nextLine() + "<br>");
+            if ((line >= 1 && line <= 8) || (line >= 20 && line <= 39)) {
+                fileContent += (fscnr.nextLine() + "<br>");
+            } else {
+                fscnr.nextLine();
+            }
+            line++;
         }
         fscnr.close();
 
